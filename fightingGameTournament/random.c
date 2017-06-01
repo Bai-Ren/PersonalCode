@@ -146,9 +146,28 @@ int main (int argc, char **argv) {
 		gl[i].chance = ((double) 1)/games;
 	}
 
-
 	char *l = NULL;
 	size_t n = 0;
+
+	while (1) {
+		printf("Input a seed for the random number generator\n");
+
+		size_t res = getline(&l, &n, stdin);
+
+		if (l[strlen(l)-1] == '\n')
+			l[strlen(l)-1] = '\0';
+
+		char c = '\0';
+		char *d = &c;
+		unsigned int i = (unsigned int) strtol(l, &d, 10);
+		if (*d != '\0') {
+			printf("Invalid number\n");
+			continue;
+		}
+
+		srand(i);
+		break;
+	}
 
 	while (1) {
 		printf ("%s", main_loop);
