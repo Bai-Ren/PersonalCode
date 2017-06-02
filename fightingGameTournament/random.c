@@ -3,9 +3,32 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #define MAX_GAMES 64
 #define LINE_BUFFER_SIZE 256
+
+//Portable RNG
+
+#define PMrand_a 16807
+#define PMrand_m 2147483647
+#define PMrand_q (PMrand_m / PMrand_a)
+#define PMrand_r (PMrand_m % PMrand_a)
+
+static long int seed = 1;
+
+double PMrand() {
+	long int hi = seed / PMrand_q;
+	long int lo = seed % PMrand_q;
+	long int test = PMrand_a * lo - PMrand_r * hi;
+	if (test > 0)
+		seed = test;
+	else
+		seed = test + PMrand_m;
+	return (double)seed / PMrand_m;
+}
+
+//Portable getline
 
 size_t getline(char **lineptr, size_t *n, FILE *stream) {
     char *bufptr = NULL;
@@ -99,7 +122,7 @@ void force (int n) {
 }
 
 void run () {
-	double r = (double) (rand()) / (double) RAND_MAX;
+	double r = PMrand();
 	for (int i=0; i<games; i++) {
 		if (gl[i].chance > r) {
 			force(i);
@@ -149,25 +172,7 @@ int main (int argc, char **argv) {
 	char *l = NULL;
 	size_t n = 0;
 
-	while (1) {
-		printf("Input a seed for the random number generator\n");
-
-		size_t res = getline(&l, &n, stdin);
-
-		if (l[strlen(l)-1] == '\n')
-			l[strlen(l)-1] = '\0';
-
-		char c = '\0';
-		char *d = &c;
-		unsigned int i = (unsigned int) strtol(l, &d, 10);
-		if (*d != '\0') {
-			printf("Invalid number\n");
-			continue;
-		}
-
-		srand(i);
-		break;
-	}
+	seed = time(NULL);
 
 	while (1) {
 		printf ("%s", main_loop);
