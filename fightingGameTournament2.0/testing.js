@@ -1,5 +1,5 @@
 function clickFunc() {
-	alert('Hi there!');
+	alert("Hi there!");
 }
 
-#! document.getElementById("clicky").onclick = clickFunc;
+document.getElementById("clicky").onclick = clickFunc;
